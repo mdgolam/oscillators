@@ -73,6 +73,24 @@ export default class Oscillators extends React.Component {
         oscillators.map((oscillator, i) => {
             if (index == i) {
                 oscillator.frequency--
+
+                let { id, frequency } = oscillator
+                $.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    url: "/oscillators/tune",
+                    data: { id: id, param_name: "frequency", value: frequency }
+                })
+                    .done(function () {
+                        console.log("success")
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        console.log("fail", jqXHR, textStatus)
+                        // console.log(JSON.parse(jqXHR.responseText).errors)
+                    })
+                    .always(function () {
+                        console.log("always")
+                    })
             }
         })
 
