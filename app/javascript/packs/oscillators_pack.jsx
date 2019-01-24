@@ -6,7 +6,7 @@ import Oscillators from '../containers/Oscillators'
 
 const OcsillatorsPack = props => (
     <div>
-        <Oscillators oscillators= { props.oscillators } />
+        <Oscillators oscillators={ props.oscillators } />
     </div>
 )
 

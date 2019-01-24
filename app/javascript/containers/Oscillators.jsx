@@ -7,22 +7,35 @@ export default class Oscillators extends React.Component {
     constructor(props) {
         super(props)
 
-        // let oscillators = []
+        let oscillators = []
 
-        // props.oscillators.map(oscillator => {
-        //     oscillators.push ({
-        //         title: oscillator.title,
-        //         frequency: 0
-        //     })
-        // })
+        props.oscillators.map(oscillator => {
+            oscillator.play = false
+            oscillators.push(oscillator)
+        })
 
         this.state = {
-            oscillators: props.oscillators
+            oscillators: oscillators
         }
 
         this.handleDownCLick = this.handleDownCLick.bind(this)
         this.handleUpCLick = this.handleUpCLick.bind(this)
-        // this.handleResetCLick = this.handleResetCLick.bind(this)
+        this.handlePlayClick = this.handlePlayClick.bind(this)
+        this.handleResetClick = this.handleResetClick.bind(this)
+    }
+
+    handlePlayClick(index) {
+        let { oscillators } = this.state
+        
+        oscillators.map((oscillator, i) => {
+            if (index == i) {
+                oscillator.play = !oscillator.play
+            }
+        })
+
+        this.setState({
+            oscillators: oscillators
+        })
     }
 
     handleUpCLick(index) {
@@ -57,13 +70,43 @@ export default class Oscillators extends React.Component {
         this.setState({
             oscillators: oscillators
         })
+
     }
 
-    // handleResetCLick() {
-    //     this.setState({
-    //         frequency: 0
-    //     })
-    // }
+    handleResetClick(index) {
+        // console.log(this.state.oscillators[index])
+
+        const { oscillators } = this.state
+
+        oscillators.map((oscillator, i) => {
+            if (index == i) {
+                oscillator.frequency = 440
+
+                let { id, frequency } = oscillator
+                $.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    url: "/oscillators/tune",
+                    data: { id: id, param_name: "frequency", value: frequency }
+                })
+                    .done(function () {
+                        console.log("success")
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        console.log("fail", jqXHR, textStatus)
+                        // console.log(JSON.parse(jqXHR.responseText).errors)
+                    })
+                    .always(function () {
+                        console.log("always")
+                    })
+            }
+        })
+
+        this.setState({
+            oscillators: oscillators
+        })
+
+    }
 
     handleDownCLick(index) {
         console.log(this.state.oscillators[index])
@@ -109,6 +152,8 @@ export default class Oscillators extends React.Component {
                     {...oscillator}
                     handleDownCLick={ this.handleDownCLick }
                     handleUpCLick={ this.handleUpCLick }
+                    handlePlayClick={this.handlePlayClick}
+                    handleResetClick={this.handleResetClick}
                     index = { i }
                     key = { i }
                 />   
