@@ -60,7 +60,7 @@ class OscillatorsController < ApplicationController
     if oscillator.update_attribute(param_name, value)
       render json: { status: 200 }, status: 200
     else
-      render json: { status: 400, errors: oscillator.errors }, status: 400
+      render json: { status: 400 }, status: 400
     end
   end
 

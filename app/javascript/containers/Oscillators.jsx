@@ -1,4 +1,5 @@
 import React from 'react'
+import $ from 'jquery'
 
 import Oscillator from '../components/Oscillator';
 
@@ -10,7 +11,7 @@ export default class Oscillators extends React.Component {
         let oscillators = []
 
         props.oscillators.map(oscillator => {
-            oscillator.play = false
+            oscillator.playing = false
             oscillators.push(oscillator)
         })
 
@@ -18,18 +19,18 @@ export default class Oscillators extends React.Component {
             oscillators: oscillators
         }
 
-        this.handleDownCLick = this.handleDownCLick.bind(this)
-        this.handleUpCLick = this.handleUpCLick.bind(this)
-        this.handlePlayClick = this.handlePlayClick.bind(this)
-        this.handleResetClick = this.handleResetClick.bind(this)
+        this.handlePlayPauseClick = this.handlePlayPauseClick.bind(this)
+        this.handleFrequencyChange = this.handleFrequencyChange.bind(this)
+        this.handleMouseUp = this.handleMouseUp.bind(this)
+        this.handleWaveChange = this.handleWaveChange.bind(this)
     }
 
-    handlePlayClick(index) {
+    handlePlayPauseClick(index) {
         let { oscillators } = this.state
-        
+
         oscillators.map((oscillator, i) => {
             if (index == i) {
-                oscillator.play = !oscillator.play
+                oscillator.playing = !oscillator.playing
             }
         })
 
@@ -38,51 +39,46 @@ export default class Oscillators extends React.Component {
         })
     }
 
-    handleUpCLick(index) {
-        console.log(this.state.oscillators[index])
-        
-        const { oscillators } = this.state
+    handleFrequencyChange(index, value) {
+        let { oscillators } = this.state
 
         oscillators.map((oscillator, i) => {
             if (index == i) {
-                oscillator.frequency++
-
-                let { id, frequency } = oscillator
-                $.ajax({
-                    dataType: "json",
-                    method: "POST",
-                    url: "/oscillators/tune",
-                    data: { id: id, param_name: "frequency", value: frequency }
-                })
-                .done(function(){
-                    console.log("success")
-                })
-                .fail(function (jqXHR, textStatus) {
-                    console.log("fail", jqXHR, textStatus)
-                    // console.log(JSON.parse(jqXHR.responseText).errors)
-                })
-                .always(function () {
-                    console.log("always")
-                })
+                oscillator.frequency = value
             }
         })
-        
+
         this.setState({
             oscillators: oscillators
         })
-
     }
-
-    handleResetClick(index) {
-        // console.log(this.state.oscillators[index])
-
-        const { oscillators } = this.state
+    
+    handleWaveChange(index, value) {
+        let { oscillators } = this.state
 
         oscillators.map((oscillator, i) => {
             if (index == i) {
-                oscillator.frequency = 440
+                oscillator.wave = value
+            }
+        })
 
-                let { id, frequency } = oscillator
+        this.setState({
+            oscillators: oscillators
+        })
+    }
+
+    handleMouseUp(index) {
+        const frequency = this.state.oscillators[index].frequency
+        this.updateFrequency(index, frequency)
+    }
+
+    updateFrequency(index, frequency) {
+        let { oscillators } = this.state
+
+        oscillators.map((oscillator, i) => {
+            if (index == i) {
+                const { id } = oscillator
+
                 $.ajax({
                     dataType: "json",
                     method: "POST",
@@ -94,45 +90,9 @@ export default class Oscillators extends React.Component {
                     })
                     .fail(function (jqXHR, textStatus) {
                         console.log("fail", jqXHR, textStatus)
-                        // console.log(JSON.parse(jqXHR.responseText).errors)
                     })
                     .always(function () {
-                        console.log("always")
-                    })
-            }
-        })
-
-        this.setState({
-            oscillators: oscillators
-        })
-
-    }
-
-    handleDownCLick(index) {
-        console.log(this.state.oscillators[index])
-
-        let { oscillators } = this.state
-
-        oscillators.map((oscillator, i) => {
-            if (index == i) {
-                oscillator.frequency--
-
-                let { id, frequency } = oscillator
-                $.ajax({
-                    dataType: "json",
-                    method: "POST",
-                    url: "/oscillators/tune",
-                    data: { id: id, param_name: "frequency", value: frequency }
-                })
-                    .done(function () {
-                        console.log("success")
-                    })
-                    .fail(function (jqXHR, textStatus) {
-                        console.log("fail", jqXHR, textStatus)
-                        // console.log(JSON.parse(jqXHR.responseText).errors)
-                    })
-                    .always(function () {
-                        console.log("always")
+                        console.log("complete")
                     })
             }
         })
@@ -150,10 +110,10 @@ export default class Oscillators extends React.Component {
             oscillatorElements.push(
                 <Oscillator
                     {...oscillator}
-                    handleDownCLick={ this.handleDownCLick }
-                    handleUpCLick={ this.handleUpCLick }
-                    handlePlayClick={this.handlePlayClick}
-                    handleResetClick={this.handleResetClick}
+                    handleMouseUp={this.handleMouseUp }
+                    handlePlayPauseClick={this.handlePlayPauseClick }
+                    handleFrequencyChange={ this.handleFrequencyChange }
+                    handleWaveChange={this.handleWaveChange}
                     index = { i }
                     key = { i }
                 />   

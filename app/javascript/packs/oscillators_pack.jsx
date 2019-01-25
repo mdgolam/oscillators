@@ -10,16 +10,7 @@ const OcsillatorsPack = props => (
     </div>
 )
 
-/* Hello.defaultProps = {
-    name: 'David'
-}
-
-Hello.propTypes = {
-    name: PropTypes.string
-}
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // const oscillators = JSON.parse(document.getElementsByTagName('body')[0].dataset.props)
     const oscillators = JSON.parse(document.getElementsByTagName('body')[0].dataset.props)
     ReactDOM.render(
         <OcsillatorsPack oscillators= { oscillators } />,
