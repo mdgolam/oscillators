@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_18_113550) do
+ActiveRecord::Schema.define(version: 2019_01_25_134148) do
 
   create_table "oscillators", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "frequency", default: 440
+    t.string "wave", default: "square"
+    t.integer "detune", default: 0
   end
 
 end

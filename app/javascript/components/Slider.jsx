@@ -21,6 +21,7 @@ export default class Slider extends React.Component {
         this.handleMouseMove = this.handleMouseMove.bind(this)
         this.handleMouseDown = this.handleMouseDown.bind(this)
         this.handleMouseUp = this.handleMouseUp.bind(this)
+        this.handleClick = this.handleClick.bind(this)
 
         this.moveThumb = this.moveThumb.bind(this)
         this.calculateLeft = this.calculateLeft.bind(this)
@@ -45,10 +46,6 @@ export default class Slider extends React.Component {
         document.addEventListener("mousemove", this.handleMouseMove)
     }
 
-    // componentDidUpdate() {
-
-    // }
-
     handleDragOver(e) {
         e.preventDefault()
     }
@@ -70,11 +67,12 @@ export default class Slider extends React.Component {
     }
     
     handleMouseUp(e) {
-        e.preventDefault()
-
-        this.setState({
-            mouseDown: false
-        })
+        if (this.state.mouseDown) {
+            this.props.handleMouseUp()
+            this.setState({
+                mouseDown: false
+            })
+        }
     }
 
     handleMouseMove(e) {
@@ -130,19 +128,19 @@ export default class Slider extends React.Component {
 
     handleClick() {
         const { value } = this.props
-        this.props.handleClick(value)
+        this.props.handleValueChange(value)
     }
 
     render() {
         const { left } = this.state.thumb
 
         const style = {
-            transform: "translateX(${left}px)"
+            transform: 'translateX({$left}px)'
         }
 
         return (
-            <div className="Slider" ref={this.slideArea} onClick={this.handleClick} onDragOver={ this.handleDragOver} onDrop= { this.handleDrop } >
-                <div className="thumb" style={style} onMouseDown={this.handleMouseDown} onMouseMove={ this.handleMouseMove } />
+            <div className="Slider" ref={ this.slideArea } onClick={this.handleClick} onDragOver={ this.handleDragOver} onDrop= { this.handleDrop } >
+                <div className="thumb" style={ style } onMouseDown={ this.handleMouseDown } onMouseMove={ this.handleMouseMove } />
             </div>
         )
     }

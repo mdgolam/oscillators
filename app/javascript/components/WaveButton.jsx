@@ -14,7 +14,10 @@ export default class WaveButton extends React.Component {
     }
 
     render() {
-        const { value } = this.props
+        const { current, value } = this.props
+
+        // here classes
+        
         return(
             <div className="WaveButton" onClick={ this.handleClick }>
                 { value }
