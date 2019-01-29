@@ -12,7 +12,7 @@ export default class Slider extends React.Component {
                 width: 0
             },
             thumb: {
-                left: 0
+                position: 0
             }
         }
 
@@ -24,13 +24,13 @@ export default class Slider extends React.Component {
         this.handleClick = this.handleClick.bind(this)
 
         this.moveThumb = this.moveThumb.bind(this)
-        this.calculateLeft = this.calculateLeft.bind(this)
+        this.calculatePosition = this.calculatePosition.bind(this)
         this.calculateValue = this.calculateValue.bind(this)
     }
 
     componentDidMount() {
         const { x, width } = this.slideArea.current.getBoundingClientRect()
-    
+        console.log(x, width, " x, width initializing")
         this.setState({
             area: {
                 left: x,
@@ -38,7 +38,7 @@ export default class Slider extends React.Component {
                 width: width
             },
            thumb: {
-               left: this.calculateLeft(width)
+               position: this.calculatePosition()
            }
         })        
     
@@ -51,16 +51,16 @@ export default class Slider extends React.Component {
     }
 
     handleDrop() {
-        console.log("Drop")
+        console.log("drop")
     }
 
     handleDragStart() {
-        console.log("Started")
+        console.log("started")
     }
 
     handleMouseDown(e) {
         e.preventDefault()
-        
+        console.log("mouse down")
         this.setState({
             mouseDown: true
         })
@@ -68,7 +68,6 @@ export default class Slider extends React.Component {
     
     handleMouseUp(e) {
         if (this.state.mouseDown) {
-            this.props.handleMouseUp()
             this.setState({
                 mouseDown: false
             })
@@ -76,51 +75,60 @@ export default class Slider extends React.Component {
     }
 
     handleMouseMove(e) {
-        const { MouseDown } = this.state
-        
-        if (MouseDown) {
-            this.moveThumb(e.screenX)
+        const { mouseDown } = this.state
+        if (mouseDown) {
+            console.log("mouse move")
+            console.log(e.movementX, " movementX")
+            this.moveThumb(e.movementX)
         }
     }
 
-    moveThumb(screenX) {
-        const areaLeft = this.state.area.left
-        const areaRight = this.state.area.right
-        const thumbLeft = screenX - areaLeft
+    moveThumb(movementX) {
+        const minPosition = this.state.area.left
+        const maxPosition = this.state.area.right
+        const thumbPosition = this.state.thumb.position
 
-        if (thumbLeft >= 0 && screenX <= areaRight) {
-            const value = this.calculateValue(thumbLeft)
+        const newPosition = thumbPosition + movementX
+
+        console.log("moveThumb")
+        console.log("new position", newPosition)
+        
+        if (minPosition <= newPosition && newPosition <= maxPosition ){
+            const value = this.calculateValue(newPosition)
             this.props.handleValueChange(value)
 
             this.setState({
                 thumb: {
-                    left: thumbLeft
+                    position: this.calculatePosition()
                 }
             })
         }
     }
 
-    calculateLeft(width) {
-        const { min, max } = this.props
-        const { value } = this.props
+    calculatePosition() {
+        const { min, max } = this.props // min and max of Frequency
+        const { value } = this.props  // value of Frequency now, hz
+        
 
-        const range = max - min
-        const coef = range / width
-
-        const left = value / coef
-
-        return left
+        const range = max - min // range btw min and max (frequency) in hz
+        const { width } = this.state.area // width of our slider in px
+        
+        const position = (value * width) / range
+        console.log(width, " width")
+        console.log(value, " value")
+        console.log(position, " position")
+        return position
     }
 
-    calculateValue(thumbLeft) {
+    calculateValue(thumbPosition) {
+        console.log("calculate")
         const { min, max } = this.props
         const { width } = this.state.area
         
         const range = max - min
         const coef = range / width
 
-        const value = thumbLeft * coef
-
+        const value = thumbPosition * coef
 
         return Math.round(value)
     }
@@ -132,16 +140,19 @@ export default class Slider extends React.Component {
     }
 
     render() {
-        const { left } = this.state.thumb
+        const { position } = this.state.thumb
+        console.log(position, "position bitch")
 
         const style = {
-            transform: 'translateX({$left}px)'
+            transform: `translateX(${ position }px)`
         }
 
         return (
-            <div className="Slider" ref={ this.slideArea } onClick={this.handleClick} onDragOver={ this.handleDragOver} onDrop= { this.handleDrop } >
+            <React.Fragment>
+            <div className="Slider" ref={ this.slideArea } onClick={ this.handleClick } onDragOver={ this.handleDragOver} onDrop= { this.handleDrop } >
                 <div className="thumb" style={ style } onMouseDown={ this.handleMouseDown } onMouseMove={ this.handleMouseMove } />
             </div>
+            </React.Fragment>
         )
     }
 }

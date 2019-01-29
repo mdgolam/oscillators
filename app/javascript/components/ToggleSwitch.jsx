@@ -6,7 +6,7 @@ export default class ToggleSwitch extends React.Component {
         super(props)
     }
 
-    rencerSwitchOffButton
+    // renderSwitchOffButton
 
     render() {
         const { name, value, handleToggleCLick } = this.props.value
@@ -14,12 +14,11 @@ export default class ToggleSwitch extends React.Component {
             "ToggleSwitch": true,
             "switchOn": !value,
             "switchOff": value,
-            ['${ name }']: true
+            [`${name}`]: true
         })
 
-        const { value } = this.props
         return (
-            <div className={classes} onClick={ handleToggleCLick } ></div>
+            <div className={ classes } onClick={ handleToggleCLick } ></div>
         )
     }
 }

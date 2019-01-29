@@ -7,8 +7,8 @@ export default class Knob extends React.Component {
         this.state = {
             mouseDown: false,
             value: 0, // db number
-            screenY: 0,
-            deg: -90 // depends on value
+            deg: 90, // depends on value
+            screenY: 0
         }
 
         this.handleMouseDown = this.handleMouseDown.bind(this)
@@ -19,18 +19,29 @@ export default class Knob extends React.Component {
     }
 
     componentDidMount() {
+        const newValue = this.props.value
+        // console.log(newValue, " — new value")
+        this.setState({
+            value: newValue,
+            deg: 90 + this.calculateDeg(newValue)
+        })
         document.addEventListener("mouseup", this.handleMouseUp)
         document.addEventListener("mousemove", this.handleMouseMove)
     }
 
     handleMouseDown(e) {
-        console.log("Mouse Down")
         e.preventDefault()
-
         this.setState({
-            screenY: e.screenY,
             mouseDown: true,
+            screenY: e.screenY
         })
+    }
+
+    handleMouseMove(e) {
+        const { mouseDown } = this.state
+        if (mouseDown) {
+            this.moveKnob(e.screenY)
+        }   
     }
 
     handleMouseUp() {
@@ -41,57 +52,55 @@ export default class Knob extends React.Component {
         }
     }
 
-    handleMouseMove(e) {
-        const { mouseDown } = this.state
-
-        if (mouseDown) {
-            this.moveKnob(e.screenY)
-        }
-        
-    }
-
     moveKnob(screenY) {
         const oldScreenY = this.state.screenY
-        const { deg } = this.state
-        const { min } = parseInt(this.props.min)
-        const { max } = parseInt(this.props.max)
+        const min = parseInt(this.props.min)
+        const max = parseInt(this.props.max)
+        const difference = oldScreenY - screenY
         let { value } = this.state
-        const difference = screenY - oldScreenY
-
+        
         value += difference
 
+        // console.log("move",difference)
+
         if (value < min) {
+            // console.log(value,min, "min")
             value = min
         } else if (value > max) {
+            // console.log(value, max, "max")
             value = max
+        } else {
+            // console.log(value, max, min)
         }
 
         this.setState({
             screenY: screenY,
-            deg: deg,
-            value: this.calculateDeg(value)
-
+            value: value,
+            deg: 90 + this.calculateDeg(value)
         })
+        this.props.handleValueChange(value)
     }
 
     calculateDeg(value) {
         const { max } = this.props
         const coef = 120 / max
         const deg = value * coef
-
-        return 120
+        return deg
     }
 
     render() {
         const { deg } = this.state
+        const { value } = this.props
 
         const styleDiv = {
-            transform: 'rotate((${deg})deg)'
-            // transform: "rotate(${deg}deg)",
+            transform: `rotate(${deg}deg)`
         };
 
         return (
-            <div className="Knob" style={styleDiv } onMouseDown= { this.handleMouseDown } onMouseMove={ this.handleMouseMove } />
+            <React.Fragment>
+            <div className="Knob" style={ styleDiv } onMouseDown={ this.handleMouseDown } onMouseMove={ this.handleMouseMove }/>
+            <p>detune: { value }</p>
+            </React.Fragment>
         )
     }
 }

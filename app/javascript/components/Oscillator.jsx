@@ -24,13 +24,14 @@ export default class Oscillator extends React.Component {
         this.handlePlayPauseClick = this.handlePlayPauseClick.bind(this)
         this.changeFrequency = this.changeFrequency.bind(this)
         this.changeWave = this.changeWave.bind(this)
+        this.changeDetune = this.changeDetune.bind(this)
         this.handleFrequencyChange = this.handleFrequencyChange.bind(this)
+        this.handleDetuneChange = this.handleDetuneChange.bind(this)
         this.handleWaveChange = this.handleWaveChange.bind(this)
-        this.handleMouseUp = this.handleMouseUp.bind(this)
     }
 
     componentDidMount() {
-        console.log("mount")
+        // console.log("mount")
     }
 
     componentDidUpdate() {
@@ -41,27 +42,16 @@ export default class Oscillator extends React.Component {
             this.stopOscillator()
         }
 
+        console.log("update")
         this.changeFrequency()
         this.changeWave()
         this.changeDetune()
-        console.log("update")
     }
 
     handlePlayPauseClick() {
         const { index, handlePlayPauseClick } = this.props
         handlePlayPauseClick(index)
     }
-
-    // handlePlayClick() {
-    //     this.startOscillator() // check
-    //     this.props.handlePlayPauseClick(this.props.index) // check
-    //     // console.log("hello from click")
-    // }
-
-    // handleStopClick() {
-    //     this.stopOscillator()
-    //     this.props.handlePlayPauseClick(this.props.index)
-    // }
     
     handleFrequencyChange(value) {
         const { index } = this.props
@@ -73,13 +63,13 @@ export default class Oscillator extends React.Component {
         this.props.handleWaveChange(index, value)
     }
 
-    handleUpCLick() {
-        this.props.handleUpCLick(this.props.index)
+    handleDetuneChange(value) {
+        const { index } = this.props
+        this.props.handleDetuneChange(index, value)
     }
 
-    handleMouseUp() {
-        const { index } = this.props
-        this.props.handleMouseUp(index)
+    handleUpCLick() {
+        this.props.handleUpCLick(this.props.index)
     }
 
     startOscillator() {
@@ -103,11 +93,10 @@ export default class Oscillator extends React.Component {
     stopOscillator() {
         let { oscillator } = this.state
         oscillator.stop()
-
     }
 
     changeFrequency() {
-        console.log("change F")
+        // console.log("change F")
         const { frequency } = this.props
         const { audioContext, oscillator } = this.state
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime)
@@ -115,13 +104,21 @@ export default class Oscillator extends React.Component {
 
     changeWave() {
         const { wave } = this.props
-        console.log("change W", wave)
+        // console.log("change W", wave)
         const { oscillator } = this.state
         oscillator.type = wave
     }
 
+    changeDetune() {
+        // console.log("changeDetune")
+        const { detune } = this.props
+        const { audioContext, oscillator } = this.state
+        oscillator.detune.setValueAtTime(detune, audioContext.currentTime)
+    }
+
     render() {
-        const { title, wave, frequency, detune, playing } = this.props
+        const { title, wave, frequency, detune } = this.props
+        // console.log(detune," detune")
         return (
             <div className="Oscillator">
 
@@ -154,14 +151,17 @@ export default class Oscillator extends React.Component {
                 <Knob
                     min="-100"
                     max="100"
+                    value={ detune }
+                    handleValueChange={ this.handleDetuneChange }
+                    // handleValueChange → this.props.handleValueChange in Knob
                 />
 
                 <Slider
                     min="0"
                     max="1000"
-                    value={frequency}
+                    value={ frequency }
                     handleValueChange={ this.handleFrequencyChange }
-                    handleMouseUp={ this.handleMouseUp }
+                    // handleMouseUp={ this.handleMouseUp }
                 />
 
                 <div className="result">
