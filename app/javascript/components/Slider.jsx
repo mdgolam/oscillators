@@ -24,8 +24,8 @@ export default class Slider extends React.Component {
         this.handleClick = this.handleClick.bind(this)
 
         this.moveThumb = this.moveThumb.bind(this)
-        this.calculatePosition = this.calculatePosition.bind(this)
-        this.calculateValue = this.calculateValue.bind(this)
+        this.calculatePosition = this.convertFrequencyToPosition.bind(this)
+        this.calculateValue = this.convertPositionToFrequency.bind(this)
     }
 
     componentDidMount() {
@@ -38,10 +38,10 @@ export default class Slider extends React.Component {
                 width: width
             },
            thumb: {
-               position: this.calculatePosition()
+               position: this.convertFrequencyToPosition()
            }
         })        
-    
+
         document.addEventListener("mouseup", this.handleMouseUp)
         document.addEventListener("mousemove", this.handleMouseMove)
     }
@@ -84,45 +84,48 @@ export default class Slider extends React.Component {
     }
 
     moveThumb(movementX) {
-        const minPosition = this.state.area.left
-        const maxPosition = this.state.area.right
+        const minPosition = 0
+        const maxPosition = this.state.area.width
         const thumbPosition = this.state.thumb.position
 
         const newPosition = thumbPosition + movementX
 
         console.log("moveThumb")
         console.log("new position", newPosition)
+        console.log("minPosition", minPosition)
+        console.log("maxPosition", maxPosition)
+        console.log("thumbPosition", thumbPosition)
         
         if (minPosition <= newPosition && newPosition <= maxPosition ){
-            const value = this.calculateValue(newPosition)
+        const value = this.convertPositionToFrequency(newPosition)
             this.props.handleValueChange(value)
 
             this.setState({
                 thumb: {
-                    position: this.calculatePosition()
+                    position: newPosition
                 }
             })
         }
     }
 
-    calculatePosition() {
+    convertFrequencyToPosition() {
         const { min, max } = this.props // min and max of Frequency
         const { value } = this.props  // value of Frequency now, hz
         
 
         const range = max - min // range btw min and max (frequency) in hz
-        const { width } = this.state.area // width of our slider in px
+        const { width } = this.slideArea.current.getBoundingClientRect()
         
         const position = (value * width) / range
         console.log(width, " width")
         console.log(value, " value")
-        console.log(position, " position")
         return position
     }
 
-    calculateValue(thumbPosition) {
+    convertPositionToFrequency(thumbPosition) {
         console.log("calculate")
         const { min, max } = this.props
+        console.log(min, max, "min max")
         const { width } = this.state.area
         
         const range = max - min
@@ -152,6 +155,13 @@ export default class Slider extends React.Component {
             <div className="Slider" ref={ this.slideArea } onClick={ this.handleClick } onDragOver={ this.handleDragOver} onDrop= { this.handleDrop } >
                 <div className="thumb" style={ style } onMouseDown={ this.handleMouseDown } onMouseMove={ this.handleMouseMove } />
             </div>
+                <div>position { position }</div>
+                <div>width {this.state.area.width}</div>
+                <div>left {this.state.area.left}</div>
+
+                <div>frequency { this.props.value }</div>
+                <div>min { this.props.min}</div>
+                <div>max {this.props.max}</div>
             </React.Fragment>
         )
     }

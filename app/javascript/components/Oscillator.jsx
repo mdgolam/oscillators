@@ -42,7 +42,7 @@ export default class Oscillator extends React.Component {
             this.stopOscillator()
         }
 
-        console.log("update")
+        // console.log("update")
         this.changeFrequency()
         this.changeWave()
         this.changeDetune()
@@ -96,7 +96,6 @@ export default class Oscillator extends React.Component {
     }
 
     changeFrequency() {
-        // console.log("change F")
         const { frequency } = this.props
         const { audioContext, oscillator } = this.state
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime)
@@ -104,13 +103,11 @@ export default class Oscillator extends React.Component {
 
     changeWave() {
         const { wave } = this.props
-        // console.log("change W", wave)
         const { oscillator } = this.state
         oscillator.type = wave
     }
 
     changeDetune() {
-        // console.log("changeDetune")
         const { detune } = this.props
         const { audioContext, oscillator } = this.state
         oscillator.detune.setValueAtTime(detune, audioContext.currentTime)
@@ -163,13 +160,6 @@ export default class Oscillator extends React.Component {
                     handleValueChange={ this.handleFrequencyChange }
                     // handleMouseUp={ this.handleMouseUp }
                 />
-
-                <div className="result">
-                    { frequency }
-                </div>
-                <div className="result">
-                    { wave }
-                </div>
             </div>
         )
     }
