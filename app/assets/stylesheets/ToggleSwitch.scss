@@ -5,12 +5,12 @@
             height: 0;
             border-style: solid;
             border-width: 10px 0 10px 17.3px;
-            border-color: transparent transparent transparent #000;
+            border-color: transparent transparent transparent $main;
         }
         &.switchOff {
             width: 20px;
             height: 20px;
-            background: black;
+            background: $main;
         }
     }
 }

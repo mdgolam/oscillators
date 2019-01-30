@@ -29,8 +29,15 @@ export default class Oscillators extends React.Component {
         this.handleDetuneChange = this.handleDetuneChange.bind(this)
     }
 
+    componentDidMount() {
+        const { oscillators } = this.state
+        this.setState({
+            playing: this.isPlaying(oscillators)
+        })   
+    }
+
     isPlaying(oscillators) {
-        let playing = false
+        let { playing } = false
 
         oscillators.map((oscillator, i) => {
             if (oscillator.playing) {
@@ -42,11 +49,11 @@ export default class Oscillators extends React.Component {
     }
 
     handlePlayPauseClick(index) {
-        let { oscillators, playing } = this.state
+        // console.log("handlePlayPauseClick")
+        let { oscillators } = this.state
 
         oscillators.map((oscillator, i) => {
             if (index == i) {
-
                 oscillator.playing = !oscillator.playing
             }
         })
@@ -154,11 +161,11 @@ export default class Oscillators extends React.Component {
             oscillatorElements.push(
                 <Oscillator
                     {...oscillator}
-                    handleMouseUp={this.handleMouseUp }
-                    handlePlayPauseClick={this.handlePlayPauseClick }
+                    handleMouseUp={ this.handleMouseUp }
+                    handlePlayPauseClick={ this.handlePlayPauseClick }
                     handleFrequencyChange={ this.handleFrequencyChange }
-                    handleWaveChange={this.handleWaveChange}
-                    handleDetuneChange={this.handleDetuneChange}
+                    handleWaveChange={ this.handleWaveChange }
+                    handleDetuneChange={ this.handleDetuneChange }
                     index = { i }
                     key = { i }
                 />   
@@ -167,10 +174,10 @@ export default class Oscillators extends React.Component {
 
         return (
             <div>
-                <ToggleSwitch
+                {/* <ToggleSwitch
                     name="play"
                     value={ playing }
-                    handleToggleClick={this.handlePlayPauseClick} />
+                    handleToggleClick={this.handlePlayPauseClick} /> */}
                     
                 <div className="Oscillators">
                     { oscillatorElements }

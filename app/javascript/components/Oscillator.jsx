@@ -32,7 +32,6 @@ export default class Oscillator extends React.Component {
     }
 
     componentDidMount() {
-        // console.log("mount")
     }
 
     componentDidUpdate() {
@@ -50,6 +49,7 @@ export default class Oscillator extends React.Component {
     }
 
     handlePlayPauseClick() {
+        // console.log("handlePlayPauseClick osc")
         const { index, handlePlayPauseClick } = this.props
         handlePlayPauseClick(index)
     }
@@ -84,7 +84,7 @@ export default class Oscillator extends React.Component {
         oscillator.connect(audioContext.destination);
         oscillator.start()
 
-        console.log("startOscillator")
+        // console.log("startOscillator")
         this.setState({
             oscillator: oscillator,
             playing: true
@@ -92,8 +92,13 @@ export default class Oscillator extends React.Component {
     }
 
     stopOscillator() {
+        // console.log("stopOscillator")
         let { oscillator } = this.state
         oscillator.stop()
+        this.setState({
+            oscillator: oscillator,
+            playing: false
+        })
     }
 
     changeFrequency() {
@@ -115,12 +120,17 @@ export default class Oscillator extends React.Component {
     }
 
     render() {
-        const { title, wave, frequency, detune } = this.props
-        // console.log(detune," detune")
+        const { title, wave, frequency, detune, playing } = this.props
         return (
             <div className="Oscillator">
 
                 <h1>{ title }</h1>
+
+                <ToggleSwitch
+                    name="play"
+                    value={ playing }
+                    handleToggleClick={ this.handlePlayPauseClick }
+                />
 
                 <WaveButton
                     current={wave}
@@ -151,7 +161,6 @@ export default class Oscillator extends React.Component {
                     max={100}
                     value={ detune }
                     handleValueChange={ this.handleDetuneChange }
-                    // handleValueChange → this.props.handleValueChange in Knob
                 />
 
                 <Slider
@@ -159,7 +168,6 @@ export default class Oscillator extends React.Component {
                     max={1000}
                     value={ frequency }
                     handleValueChange={ this.handleFrequencyChange }
-                    // handleMouseUp={ this.handleMouseUp }
                 />
             </div>
         )
