@@ -54,8 +54,8 @@ export default class Knob extends React.Component {
 
     moveKnob(screenY) {
         const oldScreenY = this.state.screenY
-        const min = parseInt(this.props.min)
-        const max = parseInt(this.props.max)
+        const min = this.props.min
+        const max = this.props.max
         const difference = oldScreenY - screenY
         let { value } = this.state
         

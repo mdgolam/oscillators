@@ -1,9 +1,10 @@
 import React from 'react'
 
 import WaveButton from 'components/WaveButton'
-import Slider from 'components/Slider'
+// import Slider from 'components/Slider'
+import Slider from 'components/SliderSimple'
 import Knob from 'components/Knob'
-import ToggleSwitch from './ToggleSwitch';
+import ToggleSwitch from './ToggleSwitch'
 
 import classnames from 'classnames'
 
@@ -146,16 +147,16 @@ export default class Oscillator extends React.Component {
                 />
 
                 <Knob
-                    min="-100"
-                    max="100"
+                    min={-100}
+                    max={100}
                     value={ detune }
                     handleValueChange={ this.handleDetuneChange }
                     // handleValueChange → this.props.handleValueChange in Knob
                 />
 
                 <Slider
-                    min="0"
-                    max="1000"
+                    min={0}
+                    max={1000}
                     value={ frequency }
                     handleValueChange={ this.handleFrequencyChange }
                     // handleMouseUp={ this.handleMouseUp }
