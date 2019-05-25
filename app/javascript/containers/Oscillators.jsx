@@ -50,7 +50,7 @@ export default class Oscillators extends React.Component {
 
     handlePlayPauseClick(index) {
         // console.log("handlePlayPauseClick")
-        let { oscillators } = this.state
+        let { oscillators, playing } = this.state
 
         oscillators.map((oscillator, i) => {
             if (index == i) {
